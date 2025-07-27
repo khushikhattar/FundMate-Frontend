@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 interface User {
   id: number;
   username: string;
@@ -22,7 +22,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -33,7 +33,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         );
         setUser(res.data.user);
       } catch (error) {
-        console.log("User not logged in");
+        console.log("Refresh failed or user not found:", error);
+        setUser(null);
       }
     };
 
@@ -53,6 +54,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("Logout failed:", err);
     } finally {
       setUser(null);
+      navigate("/login");
     }
   };
 
